@@ -31,9 +31,9 @@ object BrewInfo extends App {
     val formulaDir = "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula"
     val files = getListOfFiles(formulaDir).filter(_.getName.endsWith(".rb"))
     for (file <- files) {
-        val name = file.getName.dropRight(3).split("/").last
-        val lines = Source.fromFile(file).getLines.toList
-        val desc = lines.map(_.trim).filter(_.startsWith("desc")).head
+        val name = file.getName.dropRight(".rb".length).split("/").last
+        val lines = Source.fromFile(file).getLines().toList
+        val desc = lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
         formulas += (name -> desc)
     }
 
@@ -41,6 +41,6 @@ object BrewInfo extends App {
     for (i <- 1 to 10) {
         val name = getRandomElement(formulas.keys.toList, random)
         val desc = formulas(name)
-        println(s"$name $desc")
+        println(f"$name%20s $desc")
     }
 }
