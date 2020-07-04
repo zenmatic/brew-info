@@ -1,3 +1,4 @@
+package brewinfo
 
 import java.io.File
 import scala.io.Source
@@ -5,7 +6,7 @@ import scala.util.Random
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
 
-object BrewInfo extends App {
+object Main extends App {
     def getListOfFiles(dir: String):List[File] = {
         val d = new File(dir)
         if (d.exists && d.isDirectory) {
