@@ -10,20 +10,26 @@ import scala.collection.mutable.Map
 
 object BrewLib {
         val formulaDir = "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula"
+        val casksDir = "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask/Casks"
         val random = new Random
 
         def getName(file: String): String =
                 file.dropRight(".rb".length).split("/").last
 
         def getDescription(formulaName: String): String = {
-                val file = formulaDir + "/" + formulaName + ".rb"
-                try {
-                        val lines = Source.fromFile(file).getLines().toList
-                        lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
+                var desc = ""
+                val bdirs = List(formulaDir, casksDir)
+                for (bdir <- bdirs) {
+                        val file = bdir + "/" + formulaName + ".rb"
+                        try {
+                                val lines = Source.fromFile(file).getLines().toList
+                                desc += lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
+                        }
+                        catch {
+                                case e: java.io.FileNotFoundException => ""
+                        }
                 }
-                catch {
-                        case e: java.io.FileNotFoundException => ""
-                }
+                desc
         }
 
         def fixUpdate(): Unit = {
