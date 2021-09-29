@@ -27,6 +27,7 @@ object BrewLib {
                         }
                         catch {
                                 case e: java.io.FileNotFoundException => ""
+                                case e: java.util.NoSuchElementException => ""
                         }
                 }
                 desc
@@ -69,13 +70,21 @@ object BrewLib {
 
         def displayRandomFormulas(): Unit = {
                 var formulas = Map[String, String]()
-
-                val files = getListOfFiles(formulaDir).filter(_.getName.endsWith(".rb"))
-                for (file <- files) {
-                        val name = file.getName.dropRight(".rb".length).split("/").last
-                        val lines = Source.fromFile(file).getLines().toList
-                        val desc = lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
-                        formulas += (name -> desc)
+                val formulaDirs = List(formulaDir, casksDir)
+                for (formulaDir <- formulaDirs) {
+                        val files = getListOfFiles(formulaDir).filter(_.getName.endsWith(".rb"))
+                        for (file <- files) {
+                                try {
+                                        val name = file.getName.dropRight(".rb".length).split("/").last
+                                        val lines = Source.fromFile(file).getLines().toList
+                                        val desc = lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
+                                        formulas += (name -> desc)
+                                }
+                                catch {
+                                        case e: java.io.FileNotFoundException => ""
+                                        case e: java.util.NoSuchElementException => ""
+                                }
+                        }
                 }
 
                 for (i <- 1 to 10) {
