@@ -87,10 +87,20 @@ object BrewLib {
                         }
                 }
 
+		var selectedFormulas = Map[String, String]()
+		var maxLen = 0
                 for (i <- 1 to 10) {
                         val name = BrewLib.getRandomElement(formulas.keys.toList)
-                        val desc = formulas(name)
-                        println(f"$name%20s $desc")
+			selectedFormulas(name) = formulas(name)
+			if (name.length > maxLen) {
+				maxLen = name.length
+			}
                 }
+
+		for ((name, rawdesc) <- selectedFormulas) {
+			val space = " " * (2 + maxLen - name.length)
+			val desc = rawdesc.filter(_ != '"')
+                        println(f"$name$space$desc")
+		}
         }
 }
