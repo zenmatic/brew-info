@@ -23,7 +23,8 @@ object BrewLib {
                         val file = bdir + "/" + formulaName + ".rb"
                         try {
                                 val lines = Source.fromFile(file).getLines().toList
-                                desc += lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
+                                val rawdesc = lines.map(_.trim).filter(_.startsWith("desc")).head.drop("desc ".length)
+				desc += rawdesc.filter(_ != '"')
                         }
                         catch {
                                 case e: java.io.FileNotFoundException => ""
@@ -35,15 +36,27 @@ object BrewLib {
 
         def fixUpdate(): Unit = {
                 var line = ""
+		var formulas = Map[String, String]()
+		var maxLen = 0
                 while ({line = StdIn.readLine(); line != null}) {
                         val elements = line.split(" ")
                         if (elements.length == 1) {
                                 val name = elements(0).trim
                                 val desc = getDescription(name)
-                                println(f"$name%20s $desc")
+				formulas(name) = desc
+				if (name.length > maxLen) {
+					maxLen = name.length
+				}
                         } else {
-                                println()
-                                println(line)
+				for ((name, rawdesc) <- formulas) {
+					val space = " " * (2 + maxLen - name.length)
+					val desc2 = rawdesc.filter(_ != '"')
+					println(f"$name$space$desc2")
+				}
+				formulas = Map[String, String]()
+				maxLen = 0
+				println()
+				println(line)
                         }
                 }
         }
