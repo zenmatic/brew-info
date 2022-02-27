@@ -110,7 +110,7 @@ object BrewLib {
 			}
                 }
 
-		for ((name, rawdesc) <- selectedFormulas) {
+		for ((name, rawdesc) <- selectedFormulas.toSeq.sortBy(_._1)) {
 			val space = " " * (2 + maxLen - name.length)
 			val desc = rawdesc.filter(_ != '"')
                         println(f"$name$space$desc")
